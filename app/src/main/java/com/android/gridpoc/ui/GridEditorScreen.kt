@@ -90,18 +90,18 @@ fun GridEditorScreen(
                         gestureState.resizePreviewHeight.value = (gestureState.resizePreviewHeight.value + delta.y).coerceAtLeast(minSize)
                     }
                     ResizeCorner.TopStart -> {
-                        gestureState.resizePreviewOffsetX.value = (gestureState.resizePreviewOffsetX.value + delta.x).coerceIn(0f, maxOffsetX)
-                        gestureState.resizePreviewOffsetY.value = (gestureState.resizePreviewOffsetY.value + delta.y).coerceIn(0f, maxOffsetY)
+                        gestureState.resizePreviewOffsetX.value = (gestureState.resizePreviewOffsetX.value + delta.x).coerceAtMost(maxOffsetX)
+                        gestureState.resizePreviewOffsetY.value = (gestureState.resizePreviewOffsetY.value + delta.y).coerceAtMost(maxOffsetY)
                         gestureState.resizePreviewWidth.value = initW - gestureState.resizePreviewOffsetX.value
                         gestureState.resizePreviewHeight.value = initH - gestureState.resizePreviewOffsetY.value
                     }
                     ResizeCorner.TopEnd -> {
                         gestureState.resizePreviewWidth.value = (gestureState.resizePreviewWidth.value + delta.x).coerceAtLeast(minSize)
-                        gestureState.resizePreviewOffsetY.value = (gestureState.resizePreviewOffsetY.value + delta.y).coerceIn(0f, maxOffsetY)
+                        gestureState.resizePreviewOffsetY.value = (gestureState.resizePreviewOffsetY.value + delta.y).coerceAtMost(maxOffsetY)
                         gestureState.resizePreviewHeight.value = initH - gestureState.resizePreviewOffsetY.value
                     }
                     ResizeCorner.BottomStart -> {
-                        gestureState.resizePreviewOffsetX.value = (gestureState.resizePreviewOffsetX.value + delta.x).coerceIn(0f, maxOffsetX)
+                        gestureState.resizePreviewOffsetX.value = (gestureState.resizePreviewOffsetX.value + delta.x).coerceAtMost(maxOffsetX)
                         gestureState.resizePreviewWidth.value = initW - gestureState.resizePreviewOffsetX.value
                         gestureState.resizePreviewHeight.value = (gestureState.resizePreviewHeight.value + delta.y).coerceAtLeast(minSize)
                     }
