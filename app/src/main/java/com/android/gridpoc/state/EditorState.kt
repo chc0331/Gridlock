@@ -1,11 +1,13 @@
 package com.android.gridpoc.state
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.android.gridpoc.model.WidgetState
 
+@Stable
 class EditorState {
     val widgets = mutableStateListOf<WidgetState>(
         WidgetState(id = "A", row = 0, col = 0, spanX = 2, spanY = 2),

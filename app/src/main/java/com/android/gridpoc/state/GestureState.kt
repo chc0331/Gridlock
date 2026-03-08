@@ -1,9 +1,11 @@
 package com.android.gridpoc.state
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
 import com.android.gridpoc.model.ResizeCorner
 
+@Stable
 class GestureState {
     val dragOffset = mutableStateOf(Offset.Zero)
     val resizePreviewWidth = mutableStateOf(0f)

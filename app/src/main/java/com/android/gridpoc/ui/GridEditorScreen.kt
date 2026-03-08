@@ -3,20 +3,22 @@ package com.android.gridpoc.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.android.gridpoc.model.ResizeCorner
-import com.android.gridpoc.state.EditorState
-import com.android.gridpoc.state.GestureState
+import com.android.gridpoc.state.rememberGridEditorState
+import com.android.gridpoc.state.GridEditorState
 import kotlin.math.roundToInt
 
 @Composable
-fun GridEditorScreen(modifier: Modifier = Modifier) {
-    val editorState = remember { EditorState() }
-    val gestureState = remember { GestureState() }
+fun GridEditorScreen(
+    state: GridEditorState = rememberGridEditorState(),
+    modifier: Modifier = Modifier
+) {
+    val editorState = state.editorState
+    val gestureState = state.gestureState
     val cellSizePx = with(LocalDensity.current) { 120.dp.toPx().toInt() }
 
     Box(modifier = modifier.fillMaxSize()) {
