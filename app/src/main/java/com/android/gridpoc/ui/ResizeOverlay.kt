@@ -53,17 +53,12 @@ fun ResizeOverlay(
                         Modifier.size(previewWidth.toDp(), previewHeight.toDp())
                     }
                 )
-                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .border(2.dp, MaterialTheme.colorScheme.primary)
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = { })
                 },
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = widget.id,
-                style = MaterialTheme.typography.titleMedium
-            )
             listOf(
                 ResizeCorner.TopStart to Alignment.TopStart,
                 ResizeCorner.TopEnd to Alignment.TopEnd,
