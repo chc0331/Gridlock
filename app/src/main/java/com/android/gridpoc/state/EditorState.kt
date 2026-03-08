@@ -44,13 +44,23 @@ class EditorState {
         }
     }
 
-    fun resizeWidget(id: String, newSpanX: Int, newSpanY: Int) {
+    fun resizeWidget(id: String, newRow: Int, newCol: Int, newSpanX: Int, newSpanY: Int) {
         val index = widgets.indexOfFirst { it.id == id }
         if (index >= 0) {
             val w = widgets[index]
-            val newWidget = w.copy(spanX = newSpanX.coerceAtLeast(1), spanY = newSpanY.coerceAtLeast(1))
+            val newWidget = w.copy(
+                row = newRow.coerceAtLeast(0),
+                col = newCol.coerceAtLeast(0),
+                spanX = newSpanX.coerceAtLeast(1),
+                spanY = newSpanY.coerceAtLeast(1)
+            )
             widgets.set(index, newWidget)
         }
+    }
+
+    fun resizeWidget(id: String, newSpanX: Int, newSpanY: Int) {
+        val w = getWidget(id) ?: return
+        resizeWidget(id, w.row, w.col, newSpanX, newSpanY)
     }
 
     fun getWidget(id: String): WidgetState? = widgets.find { it.id == id }
