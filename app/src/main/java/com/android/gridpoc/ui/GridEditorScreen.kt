@@ -4,13 +4,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.android.gridpoc.model.ResizeCorner
-import com.android.gridpoc.state.rememberGridEditorState
 import com.android.gridpoc.state.GridEditorState
-import kotlin.math.roundToInt
+import com.android.gridpoc.state.rememberGridEditorState
 
 @Composable
 fun GridEditorScreen(
@@ -31,37 +28,10 @@ fun GridEditorScreen(
                 WidgetItem(
                     widget = widget,
                     isSelected = widget.id == editorState.resizingWidgetId,
-                    onTap = {
-                        editorState.startResize(widget.id)
-                        editorState.getWidget(widget.id)?.let { w ->
-                            val initW = w.spanX * cellSizePx.toFloat()
-                            val initH = w.spanY * cellSizePx.toFloat()
-                            gestureState.resizePreviewWidth.value = initW
-                            gestureState.resizePreviewHeight.value = initH
-                            gestureState.resizePreviewOffsetX.value = 0f
-                            gestureState.resizePreviewOffsetY.value = 0f
-                            gestureState.initialResizeWidth.value = initW
-                            gestureState.initialResizeHeight.value = initH
-                            gestureState.activeResizeCorner.value = null
-                        }
-                    },
-                    onLongPress = {
-                        editorState.startDrag(widget.id)
-                        editorState.endResize()
-                        gestureState.dragOffset.value = Offset.Zero
-                    },
-                    onDrag = { delta ->
-                        gestureState.dragOffset.value += delta
-                    },
-                    onDragEnd = {
-                        val id = editorState.draggingWidgetId ?: return@WidgetItem
-                        val w = editorState.getWidget(id) ?: return@WidgetItem
-                        val targetCol = ((w.col * cellSizePx + gestureState.dragOffset.value.x) / cellSizePx).roundToInt().coerceAtLeast(0)
-                        val targetRow = ((w.row * cellSizePx + gestureState.dragOffset.value.y) / cellSizePx).roundToInt().coerceAtLeast(0)
-                        editorState.moveWidget(id, targetRow, targetCol)
-                        editorState.endDrag()
-                        gestureState.dragOffset.value = Offset.Zero
-                    }
+                    onTap = { state.resizeController.startResize(widget.id, cellSizePx) },
+                    onLongPress = { state.dragController.startDrag(widget.id) },
+                    onDrag = { delta -> state.dragController.onDrag(delta) },
+                    onDragEnd = { state.dragController.onDragEnd(cellSizePx) }
                 )
             }
         }
@@ -78,60 +48,10 @@ fun GridEditorScreen(
             cellSizePx = cellSizePx,
             gestureState = gestureState,
             onResizeHandleDrag = { delta, corner ->
-                gestureState.activeResizeCorner.value = corner
-                val initW = gestureState.initialResizeWidth.value
-                val initH = gestureState.initialResizeHeight.value
-                val minSize = cellSizePx.toFloat()
-                val maxOffsetX = (initW - minSize).coerceAtLeast(0f)
-                val maxOffsetY = (initH - minSize).coerceAtLeast(0f)
-                when (corner) {
-                    ResizeCorner.BottomEnd -> {
-                        gestureState.resizePreviewWidth.value = (gestureState.resizePreviewWidth.value + delta.x).coerceAtLeast(minSize)
-                        gestureState.resizePreviewHeight.value = (gestureState.resizePreviewHeight.value + delta.y).coerceAtLeast(minSize)
-                    }
-                    ResizeCorner.TopStart -> {
-                        gestureState.resizePreviewOffsetX.value = (gestureState.resizePreviewOffsetX.value + delta.x).coerceAtMost(maxOffsetX)
-                        gestureState.resizePreviewOffsetY.value = (gestureState.resizePreviewOffsetY.value + delta.y).coerceAtMost(maxOffsetY)
-                        gestureState.resizePreviewWidth.value = initW - gestureState.resizePreviewOffsetX.value
-                        gestureState.resizePreviewHeight.value = initH - gestureState.resizePreviewOffsetY.value
-                    }
-                    ResizeCorner.TopEnd -> {
-                        gestureState.resizePreviewWidth.value = (gestureState.resizePreviewWidth.value + delta.x).coerceAtLeast(minSize)
-                        gestureState.resizePreviewOffsetY.value = (gestureState.resizePreviewOffsetY.value + delta.y).coerceAtMost(maxOffsetY)
-                        gestureState.resizePreviewHeight.value = initH - gestureState.resizePreviewOffsetY.value
-                    }
-                    ResizeCorner.BottomStart -> {
-                        gestureState.resizePreviewOffsetX.value = (gestureState.resizePreviewOffsetX.value + delta.x).coerceAtMost(maxOffsetX)
-                        gestureState.resizePreviewWidth.value = initW - gestureState.resizePreviewOffsetX.value
-                        gestureState.resizePreviewHeight.value = (gestureState.resizePreviewHeight.value + delta.y).coerceAtLeast(minSize)
-                    }
-                }
+                state.resizeController.applyResizeDelta(delta, corner, cellSizePx)
             },
-            onResizeHandleDragEnd = end@ { corner ->
-                editorState.resizingWidgetId?.let { id ->
-                    val w = editorState.getWidget(id) ?: return@end
-                    val pw = gestureState.resizePreviewWidth.value
-                    val ph = gestureState.resizePreviewHeight.value
-                    val ox = gestureState.resizePreviewOffsetX.value
-                    val oy = gestureState.resizePreviewOffsetY.value
-                    val newSpanX = (pw / cellSizePx).roundToInt().coerceAtLeast(1)
-                    val newSpanY = (ph / cellSizePx).roundToInt().coerceAtLeast(1)
-                    val (newRow, newCol) = when (corner) {
-                        ResizeCorner.BottomEnd -> w.row to w.col
-                        ResizeCorner.TopStart -> (w.row + (oy / cellSizePx).roundToInt()).coerceAtLeast(0) to (w.col + (ox / cellSizePx).roundToInt()).coerceAtLeast(0)
-                        ResizeCorner.TopEnd -> (w.row + (oy / cellSizePx).roundToInt()).coerceAtLeast(0) to w.col
-                        ResizeCorner.BottomStart -> w.row to (w.col + (ox / cellSizePx).roundToInt()).coerceAtLeast(0)
-                    }
-                    editorState.resizeWidget(id, newRow, newCol, newSpanX, newSpanY)
-                    gestureState.resizePreviewWidth.value = 0f
-                    gestureState.resizePreviewHeight.value = 0f
-                    gestureState.resizePreviewOffsetX.value = 0f
-                    gestureState.resizePreviewOffsetY.value = 0f
-                    gestureState.initialResizeWidth.value = 0f
-                    gestureState.initialResizeHeight.value = 0f
-                    gestureState.activeResizeCorner.value = null
-                    editorState.endResize()
-                }
+            onResizeHandleDragEnd = { corner ->
+                state.resizeController.commitResize(corner, cellSizePx)
             },
             modifier = Modifier.fillMaxSize()
         )
