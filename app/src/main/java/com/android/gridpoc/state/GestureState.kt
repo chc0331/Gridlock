@@ -11,4 +11,8 @@ class GestureState {
     val resizePreviewOffsetX = mutableStateOf(0f)
     val resizePreviewOffsetY = mutableStateOf(0f)
     val activeResizeCorner = mutableStateOf<ResizeCorner?>(null)
+    /** Initial width when resize started (for offset clamping). */
+    val initialResizeWidth = mutableStateOf(0f)
+    /** Initial height when resize started (for offset clamping). */
+    val initialResizeHeight = mutableStateOf(0f)
 }

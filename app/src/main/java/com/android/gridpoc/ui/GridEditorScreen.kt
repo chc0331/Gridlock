@@ -32,10 +32,14 @@ fun GridEditorScreen(modifier: Modifier = Modifier) {
                     onTap = {
                         editorState.startResize(widget.id)
                         editorState.getWidget(widget.id)?.let { w ->
-                            gestureState.resizePreviewWidth.value = w.spanX * cellSizePx.toFloat()
-                            gestureState.resizePreviewHeight.value = w.spanY * cellSizePx.toFloat()
+                            val initW = w.spanX * cellSizePx.toFloat()
+                            val initH = w.spanY * cellSizePx.toFloat()
+                            gestureState.resizePreviewWidth.value = initW
+                            gestureState.resizePreviewHeight.value = initH
                             gestureState.resizePreviewOffsetX.value = 0f
                             gestureState.resizePreviewOffsetY.value = 0f
+                            gestureState.initialResizeWidth.value = initW
+                            gestureState.initialResizeHeight.value = initH
                             gestureState.activeResizeCorner.value = null
                         }
                     },
@@ -73,26 +77,31 @@ fun GridEditorScreen(modifier: Modifier = Modifier) {
             gestureState = gestureState,
             onResizeHandleDrag = { delta, corner ->
                 gestureState.activeResizeCorner.value = corner
+                val initW = gestureState.initialResizeWidth.value
+                val initH = gestureState.initialResizeHeight.value
+                val minSize = cellSizePx.toFloat()
+                val maxOffsetX = (initW - minSize).coerceAtLeast(0f)
+                val maxOffsetY = (initH - minSize).coerceAtLeast(0f)
                 when (corner) {
                     ResizeCorner.BottomEnd -> {
-                        gestureState.resizePreviewWidth.value += delta.x
-                        gestureState.resizePreviewHeight.value += delta.y
+                        gestureState.resizePreviewWidth.value = (gestureState.resizePreviewWidth.value + delta.x).coerceAtLeast(minSize)
+                        gestureState.resizePreviewHeight.value = (gestureState.resizePreviewHeight.value + delta.y).coerceAtLeast(minSize)
                     }
                     ResizeCorner.TopStart -> {
-                        gestureState.resizePreviewWidth.value -= delta.x
-                        gestureState.resizePreviewHeight.value -= delta.y
-                        gestureState.resizePreviewOffsetX.value += delta.x
-                        gestureState.resizePreviewOffsetY.value += delta.y
+                        gestureState.resizePreviewOffsetX.value = (gestureState.resizePreviewOffsetX.value + delta.x).coerceIn(0f, maxOffsetX)
+                        gestureState.resizePreviewOffsetY.value = (gestureState.resizePreviewOffsetY.value + delta.y).coerceIn(0f, maxOffsetY)
+                        gestureState.resizePreviewWidth.value = initW - gestureState.resizePreviewOffsetX.value
+                        gestureState.resizePreviewHeight.value = initH - gestureState.resizePreviewOffsetY.value
                     }
                     ResizeCorner.TopEnd -> {
-                        gestureState.resizePreviewWidth.value += delta.x
-                        gestureState.resizePreviewHeight.value -= delta.y
-                        gestureState.resizePreviewOffsetY.value += delta.y
+                        gestureState.resizePreviewWidth.value = (gestureState.resizePreviewWidth.value + delta.x).coerceAtLeast(minSize)
+                        gestureState.resizePreviewOffsetY.value = (gestureState.resizePreviewOffsetY.value + delta.y).coerceIn(0f, maxOffsetY)
+                        gestureState.resizePreviewHeight.value = initH - gestureState.resizePreviewOffsetY.value
                     }
                     ResizeCorner.BottomStart -> {
-                        gestureState.resizePreviewWidth.value -= delta.x
-                        gestureState.resizePreviewHeight.value += delta.y
-                        gestureState.resizePreviewOffsetX.value += delta.x
+                        gestureState.resizePreviewOffsetX.value = (gestureState.resizePreviewOffsetX.value + delta.x).coerceIn(0f, maxOffsetX)
+                        gestureState.resizePreviewWidth.value = initW - gestureState.resizePreviewOffsetX.value
+                        gestureState.resizePreviewHeight.value = (gestureState.resizePreviewHeight.value + delta.y).coerceAtLeast(minSize)
                     }
                 }
             },
@@ -116,6 +125,8 @@ fun GridEditorScreen(modifier: Modifier = Modifier) {
                     gestureState.resizePreviewHeight.value = 0f
                     gestureState.resizePreviewOffsetX.value = 0f
                     gestureState.resizePreviewOffsetY.value = 0f
+                    gestureState.initialResizeWidth.value = 0f
+                    gestureState.initialResizeHeight.value = 0f
                     gestureState.activeResizeCorner.value = null
                     editorState.endResize()
                 }
