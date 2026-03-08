@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,8 +24,6 @@ fun WidgetItem(
     onLongPress: () -> Unit,
     onDrag: (Offset) -> Unit,
     onDragEnd: () -> Unit,
-    onResizeHandleDrag: (Offset) -> Unit,
-    onResizeHandleDragEnd: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -56,14 +53,5 @@ fun WidgetItem(
             text = widget.id,
             style = MaterialTheme.typography.titleMedium
         )
-        if (isSelected) {
-            ResizeHandle(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(4.dp),
-                onDrag = onResizeHandleDrag,
-                onDragEnd = onResizeHandleDragEnd
-            )
-        }
     }
 }

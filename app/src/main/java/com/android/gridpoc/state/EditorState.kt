@@ -48,7 +48,8 @@ class EditorState {
         val index = widgets.indexOfFirst { it.id == id }
         if (index >= 0) {
             val w = widgets[index]
-            widgets[index] = w.copy(spanX = newSpanX.coerceAtLeast(1), spanY = newSpanY.coerceAtLeast(1))
+            val newWidget = w.copy(spanX = newSpanX.coerceAtLeast(1), spanY = newSpanY.coerceAtLeast(1))
+            widgets.set(index, newWidget)
         }
     }
 

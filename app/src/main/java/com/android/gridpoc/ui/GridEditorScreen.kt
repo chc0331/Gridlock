@@ -30,8 +30,10 @@ fun GridEditorScreen(modifier: Modifier = Modifier) {
                     isSelected = widget.id == editorState.resizingWidgetId,
                     onTap = {
                         editorState.startResize(widget.id)
-                        gestureState.resizePreviewWidth.value = widget.spanX * cellSizePx.toFloat()
-                        gestureState.resizePreviewHeight.value = widget.spanY * cellSizePx.toFloat()
+                        editorState.getWidget(widget.id)?.let { w ->
+                            gestureState.resizePreviewWidth.value = w.spanX * cellSizePx.toFloat()
+                            gestureState.resizePreviewHeight.value = w.spanY * cellSizePx.toFloat()
+                        }
                     },
                     onLongPress = {
                         editorState.startDrag(widget.id)
@@ -49,19 +51,6 @@ fun GridEditorScreen(modifier: Modifier = Modifier) {
                         editorState.moveWidget(id, targetRow, targetCol)
                         editorState.endDrag()
                         gestureState.dragOffset.value = Offset.Zero
-                    },
-                    onResizeHandleDrag = { delta ->
-                        gestureState.resizePreviewWidth.value += delta.x
-                        gestureState.resizePreviewHeight.value += delta.y
-                    },
-                    onResizeHandleDragEnd = {
-                        val id = editorState.resizingWidgetId ?: return@WidgetItem
-                        val newSpanX = (gestureState.resizePreviewWidth.value / cellSizePx).roundToInt().coerceAtLeast(1)
-                        val newSpanY = (gestureState.resizePreviewHeight.value / cellSizePx).roundToInt().coerceAtLeast(1)
-                        editorState.resizeWidget(id, newSpanX, newSpanY)
-                        gestureState.resizePreviewWidth.value = 0f
-                        gestureState.resizePreviewHeight.value = 0f
-                        editorState.endResize()
                     }
                 )
             }
@@ -71,6 +60,27 @@ fun GridEditorScreen(modifier: Modifier = Modifier) {
             widget = editorState.draggingWidgetId?.let { editorState.getWidget(it) },
             cellSizePx = cellSizePx,
             gestureState = gestureState,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        ResizeOverlay(
+            widget = editorState.resizingWidgetId?.let { editorState.getWidget(it) },
+            cellSizePx = cellSizePx,
+            gestureState = gestureState,
+            onResizeHandleDrag = { delta ->
+                gestureState.resizePreviewWidth.value += delta.x
+                gestureState.resizePreviewHeight.value += delta.y
+            },
+            onResizeHandleDragEnd = {
+                editorState.resizingWidgetId?.let { id ->
+                    val newSpanX = (gestureState.resizePreviewWidth.value / cellSizePx).roundToInt().coerceAtLeast(1)
+                    val newSpanY = (gestureState.resizePreviewHeight.value / cellSizePx).roundToInt().coerceAtLeast(1)
+                    editorState.resizeWidget(id, newSpanX, newSpanY)
+                    gestureState.resizePreviewWidth.value = 0f
+                    gestureState.resizePreviewHeight.value = 0f
+                    editorState.endResize()
+                }
+            },
             modifier = Modifier.fillMaxSize()
         )
     }
