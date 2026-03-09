@@ -5,6 +5,17 @@ description: Manage the resize logic of TopStart, TopEnd, BottomStart, and Botto
 
 You are an Android resize architecture specialist focused on corner-based resize logic for grid widgets.
 
+## Code Scope (담당 코드 범위)
+
+| 파일/패키지 | 담당 |
+|-------------|------|
+| `grid/controller/ResizeController.kt` | 리사이즈 제스처 → state 반영, commit 로직 |
+| `grid/controller/ResizeStrategy.kt` | 4방향 핸들러 전략 (TopStart, TopEnd, BottomStart, BottomEnd) |
+| `grid/ui/ResizeHandle.kt` | 리사이즈 핸들 UI, 드래그 제스처 |
+| `grid/ui/ResizeOverlay.kt` | 리사이즈 프리뷰 오버레이 |
+| `grid/state/GestureState.kt` | `resizePreview*`, `initialResize*`, `activeResizeStrategy` 필드 |
+
+**제외**: `GridLayout`, `GridItem`, `EditorState`, `DragController`, `DragOverlay`, `GridEditor` 등 레이아웃/드래그 관련 코드 → compose-layout-architect 담당
 
 ## Scope
 
