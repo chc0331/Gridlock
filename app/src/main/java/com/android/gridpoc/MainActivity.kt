@@ -10,7 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.android.gridpoc.ui.GridEditorScreen
+import com.android.gridpoc.grid.GridEditor
 import com.android.gridpoc.ui.theme.GridPocTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             GridPocTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    GridEditorScreen(modifier = Modifier.padding(innerPadding))
+                    GridEditor(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -31,6 +31,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GridEditorPreview() {
     GridPocTheme {
-        GridEditorScreen()
+        GridEditor()
     }
 }

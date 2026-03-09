@@ -1,14 +1,14 @@
-package com.android.gridpoc.controller
+package com.android.gridpoc.grid.controller
 
 import androidx.compose.ui.geometry.Offset
-import com.android.gridpoc.state.EditorState
-import com.android.gridpoc.state.GestureState
+import com.android.gridpoc.grid.state.EditorState
+import com.android.gridpoc.grid.state.GestureState
 import kotlin.math.roundToInt
 
 /**
  * Handles drag gesture logic: offset updates and commit to editor state.
  */
-class DragController(
+internal class DragController(
     private val editorState: EditorState,
     private val gestureState: GestureState
 ) {

@@ -1,4 +1,4 @@
-package com.android.gridpoc.ui
+package com.android.gridpoc.grid.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,14 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
-import com.android.gridpoc.model.WidgetState
-import com.android.gridpoc.state.GestureState
+import com.android.gridpoc.grid.GridItem
+import com.android.gridpoc.grid.state.GestureState
 
 @Composable
-fun DragOverlay(
-    widget: WidgetState?,
+internal fun DragOverlay(
+    widget: GridItem?,
     cellSizePx: Int,
     gestureState: GestureState,
+    itemContent: @Composable (GridItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (widget == null) return
@@ -49,10 +50,7 @@ fun DragOverlay(
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = widget.id,
-                style = MaterialTheme.typography.titleMedium
-            )
+            itemContent(widget)
         }
     }
 }

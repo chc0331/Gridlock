@@ -1,9 +1,9 @@
-package com.android.gridpoc.controller
+package com.android.gridpoc.grid.controller
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset
-import com.android.gridpoc.model.WidgetState
-import com.android.gridpoc.state.GestureState
+import com.android.gridpoc.grid.GridItem
+import com.android.gridpoc.grid.state.GestureState
 import kotlin.math.roundToInt
 
 /**
@@ -11,7 +11,7 @@ import kotlin.math.roundToInt
  * Each corner (TopStart, TopEnd, BottomStart, BottomEnd) has different
  * behavior for preview delta application and position computation on commit.
  */
-interface ResizeStrategy {
+internal interface ResizeStrategy {
     /** Alignment for placing the resize handle in the overlay. */
     val alignment: Alignment
 
@@ -32,7 +32,7 @@ interface ResizeStrategy {
      * Computes new (row, col) from preview values when committing resize.
      */
     fun computeNewPosition(
-        widget: WidgetState,
+        widget: GridItem,
         pw: Float,
         ph: Float,
         ox: Float,
@@ -52,7 +52,7 @@ interface ResizeStrategy {
 }
 
 /** BottomEnd: origin fixed, expand width/height. */
-object BottomEndResizeStrategy : ResizeStrategy {
+internal object BottomEndResizeStrategy : ResizeStrategy {
     override val alignment = Alignment.BottomEnd
 
     override fun applyResizeDelta(
@@ -71,7 +71,7 @@ object BottomEndResizeStrategy : ResizeStrategy {
     }
 
     override fun computeNewPosition(
-        widget: WidgetState,
+        widget: GridItem,
         pw: Float,
         ph: Float,
         ox: Float,
@@ -81,7 +81,7 @@ object BottomEndResizeStrategy : ResizeStrategy {
 }
 
 /** TopStart: origin moves; width/height shrink via offset. */
-object TopStartResizeStrategy : ResizeStrategy {
+internal object TopStartResizeStrategy : ResizeStrategy {
     override val alignment = Alignment.TopStart
 
     override fun applyResizeDelta(
@@ -102,7 +102,7 @@ object TopStartResizeStrategy : ResizeStrategy {
     }
 
     override fun computeNewPosition(
-        widget: WidgetState,
+        widget: GridItem,
         pw: Float,
         ph: Float,
         ox: Float,
@@ -116,7 +116,7 @@ object TopStartResizeStrategy : ResizeStrategy {
 }
 
 /** TopEnd: origin moves vertically; width expands, height shrinks via offsetY. */
-object TopEndResizeStrategy : ResizeStrategy {
+internal object TopEndResizeStrategy : ResizeStrategy {
     override val alignment = Alignment.TopEnd
 
     override fun applyResizeDelta(
@@ -136,7 +136,7 @@ object TopEndResizeStrategy : ResizeStrategy {
     }
 
     override fun computeNewPosition(
-        widget: WidgetState,
+        widget: GridItem,
         pw: Float,
         ph: Float,
         ox: Float,
@@ -149,7 +149,7 @@ object TopEndResizeStrategy : ResizeStrategy {
 }
 
 /** BottomStart: origin moves horizontally; width shrinks via offsetX, height expands. */
-object BottomStartResizeStrategy : ResizeStrategy {
+internal object BottomStartResizeStrategy : ResizeStrategy {
     override val alignment = Alignment.BottomStart
 
     override fun applyResizeDelta(
@@ -169,7 +169,7 @@ object BottomStartResizeStrategy : ResizeStrategy {
     }
 
     override fun computeNewPosition(
-        widget: WidgetState,
+        widget: GridItem,
         pw: Float,
         ph: Float,
         ox: Float,
@@ -180,4 +180,3 @@ object BottomStartResizeStrategy : ResizeStrategy {
         return widget.row to newCol
     }
 }
-

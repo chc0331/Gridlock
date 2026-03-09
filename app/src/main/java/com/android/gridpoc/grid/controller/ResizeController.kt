@@ -1,16 +1,15 @@
-package com.android.gridpoc.controller
+package com.android.gridpoc.grid.controller
 
 import androidx.compose.ui.geometry.Offset
-import com.android.gridpoc.controller.ResizeStrategy
-import com.android.gridpoc.state.EditorState
-import com.android.gridpoc.state.GestureState
+import com.android.gridpoc.grid.state.EditorState
+import com.android.gridpoc.grid.state.GestureState
 import kotlin.math.roundToInt
 
 /**
  * Handles resize gesture logic: preview updates and commit to editor state.
  * Uses [ResizeStrategy] per corner (TopStart, TopEnd, BottomStart, BottomEnd).
  */
-class ResizeController(
+internal class ResizeController(
     private val editorState: EditorState,
     private val gestureState: GestureState
 ) {

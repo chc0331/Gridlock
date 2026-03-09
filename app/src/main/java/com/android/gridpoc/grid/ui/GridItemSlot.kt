@@ -1,4 +1,4 @@
-package com.android.gridpoc.ui
+package com.android.gridpoc.grid.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,16 +14,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.android.gridpoc.model.WidgetState
+import com.android.gridpoc.grid.GridItem
 
+/**
+ * Internal wrapper that provides gesture detection (tap, long-press, drag) and
+ * delegates visual content to [itemContent].
+ */
 @Composable
-fun WidgetItem(
-    widget: WidgetState,
+internal fun GridItemSlot(
+    item: GridItem,
     isSelected: Boolean,
     onTap: () -> Unit,
     onLongPress: () -> Unit,
     onDrag: (Offset) -> Unit,
     onDragEnd: () -> Unit,
+    itemContent: @Composable (GridItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -34,10 +39,10 @@ fun WidgetItem(
                 width = if (isSelected) 2.dp else 1.dp,
                 color = MaterialTheme.colorScheme.outline
             )
-            .pointerInput(widget.id) {
+            .pointerInput(item.id) {
                 detectTapGestures(onTap = { onTap() })
             }
-            .pointerInput(widget.id) {
+            .pointerInput(item.id) {
                 detectDragGesturesAfterLongPress(
                     onDragStart = { onLongPress() },
                     onDrag = { change, dragAmount ->
@@ -49,9 +54,6 @@ fun WidgetItem(
             },
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = widget.id,
-            style = MaterialTheme.typography.titleMedium
-        )
+        itemContent(item)
     }
 }

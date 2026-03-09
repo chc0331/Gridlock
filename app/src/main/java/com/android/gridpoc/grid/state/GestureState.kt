@@ -1,12 +1,12 @@
-package com.android.gridpoc.state
+package com.android.gridpoc.grid.state
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
-import com.android.gridpoc.controller.ResizeStrategy
+import com.android.gridpoc.grid.controller.ResizeStrategy
 
 @Stable
-class GestureState {
+internal class GestureState {
     val dragOffset = mutableStateOf(Offset.Zero)
     val resizePreviewWidth = mutableStateOf(0f)
     val resizePreviewHeight = mutableStateOf(0f)

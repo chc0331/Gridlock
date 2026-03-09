@@ -1,6 +1,5 @@
-package com.android.gridpoc.ui
+package com.android.gridpoc.grid.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,16 +16,17 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.android.gridpoc.controller.ResizeStrategy
-import com.android.gridpoc.model.WidgetState
+import com.android.gridpoc.grid.GridItem
+import com.android.gridpoc.grid.controller.ResizeStrategy
+import com.android.gridpoc.grid.state.GestureState
 import kotlin.math.roundToInt
-import com.android.gridpoc.state.GestureState
 
 @Composable
-fun ResizeOverlay(
-    widget: WidgetState?,
+internal fun ResizeOverlay(
+    widget: GridItem?,
     cellSizePx: Int,
     gestureState: GestureState,
+    itemContent: @Composable (GridItem) -> Unit,
     onResizeHandleDrag: (Offset, ResizeStrategy) -> Unit,
     onResizeHandleDragEnd: (ResizeStrategy) -> Unit,
     modifier: Modifier = Modifier
@@ -59,6 +58,7 @@ fun ResizeOverlay(
                 },
             contentAlignment = Alignment.Center
         ) {
+            itemContent(widget)
             ResizeStrategy.All.forEach { strategy ->
                 ResizeHandle(
                     strategy = strategy,

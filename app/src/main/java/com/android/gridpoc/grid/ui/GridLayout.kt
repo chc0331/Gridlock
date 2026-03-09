@@ -1,15 +1,15 @@
-package com.android.gridpoc.ui
+package com.android.gridpoc.grid.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.unit.Constraints
-import com.android.gridpoc.model.WidgetState
+import com.android.gridpoc.grid.GridItem
 
 @Composable
-fun GridLayout(
-    widgets: List<WidgetState>,
+internal fun GridLayout(
+    widgets: List<GridItem>,
     cellSizePx: Int,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
