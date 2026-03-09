@@ -47,11 +47,11 @@ fun GridEditorScreen(
             widget = editorState.resizingWidgetId?.let { editorState.getWidget(it) },
             cellSizePx = cellSizePx,
             gestureState = gestureState,
-            onResizeHandleDrag = { delta, corner ->
-                state.resizeController.applyResizeDelta(delta, corner, cellSizePx)
+            onResizeHandleDrag = { delta, strategy ->
+                state.resizeController.applyResizeDelta(delta, strategy, cellSizePx)
             },
-            onResizeHandleDragEnd = { corner ->
-                state.resizeController.commitResize(corner, cellSizePx)
+            onResizeHandleDragEnd = { strategy ->
+                state.resizeController.commitResize(strategy, cellSizePx)
             },
             modifier = Modifier.fillMaxSize()
         )

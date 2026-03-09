@@ -18,7 +18,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.android.gridpoc.model.ResizeCorner
+import com.android.gridpoc.controller.ResizeStrategy
 import com.android.gridpoc.model.WidgetState
 import kotlin.math.roundToInt
 import com.android.gridpoc.state.GestureState
@@ -28,8 +28,8 @@ fun ResizeOverlay(
     widget: WidgetState?,
     cellSizePx: Int,
     gestureState: GestureState,
-    onResizeHandleDrag: (Offset, ResizeCorner) -> Unit,
-    onResizeHandleDragEnd: (ResizeCorner) -> Unit,
+    onResizeHandleDrag: (Offset, ResizeStrategy) -> Unit,
+    onResizeHandleDragEnd: (ResizeStrategy) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (widget == null) return
@@ -59,16 +59,11 @@ fun ResizeOverlay(
                 },
             contentAlignment = Alignment.Center
         ) {
-            listOf(
-                ResizeCorner.TopStart to Alignment.TopStart,
-                ResizeCorner.TopEnd to Alignment.TopEnd,
-                ResizeCorner.BottomStart to Alignment.BottomStart,
-                ResizeCorner.BottomEnd to Alignment.BottomEnd
-            ).forEach { (corner, alignment) ->
+            ResizeStrategy.All.forEach { strategy ->
                 ResizeHandle(
-                    corner = corner,
+                    strategy = strategy,
                     modifier = Modifier
-                        .align(alignment)
+                        .align(strategy.alignment)
                         .padding(4.dp),
                     onDrag = onResizeHandleDrag,
                     onDragEnd = onResizeHandleDragEnd

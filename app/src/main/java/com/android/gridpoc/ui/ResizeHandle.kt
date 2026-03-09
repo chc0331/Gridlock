@@ -9,28 +9,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.android.gridpoc.model.ResizeCorner
+import com.android.gridpoc.controller.ResizeStrategy
 
 private val HandleSizeDp = 16.dp
 
 @Composable
 fun ResizeHandle(
-    corner: ResizeCorner,
+    strategy: ResizeStrategy,
     modifier: Modifier = Modifier,
-    onDrag: (Offset, ResizeCorner) -> Unit,
-    onDragEnd: (ResizeCorner) -> Unit
+    onDrag: (Offset, ResizeStrategy) -> Unit,
+    onDragEnd: (ResizeStrategy) -> Unit
 ) {
     Box(
         modifier = modifier
             .size(HandleSizeDp)
             .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
-            .pointerInput(corner) {
+            .pointerInput(strategy) {
                 detectDragGestures(
                     onDrag = { change, dragAmount ->
                         change.consume()
-                        onDrag(dragAmount, corner)
+                        onDrag(dragAmount, strategy)
                     },
-                    onDragEnd = { onDragEnd(corner) }
+                    onDragEnd = { onDragEnd(strategy) }
                 )
             }
     )
